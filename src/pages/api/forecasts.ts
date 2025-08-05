@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { data: forecasts, error } = await supabase
       .from('forecasts')
-      .select('id, user_id, species, zip, forecast, ebird_summary, created_at')
+      .select('id, user_id, species, zip, forecast, ebird_summary, created_at, weather_data')
       .order('created_at', { ascending: false })
       .limit(50); // Get the 50 most recent forecasts
 

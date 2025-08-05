@@ -19,4 +19,5 @@ export interface ForecastListItem {
   created_at: string;
   forecast: string;
   ebird_summary: string;
+  weather_data?: any;
 }

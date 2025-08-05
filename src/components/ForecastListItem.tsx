@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { ForecastListItem } from '@/types';
+import WeatherOutlook from './WeatherOutlook';
 
 interface ForecastListItemProps {
   forecast: ForecastListItem;
@@ -74,6 +75,7 @@ export default function ForecastListItem({ forecast }: ForecastListItemProps) {
 
       {expanded && (
         <div className="mt-4 prose prose-sm prose-gray max-w-none">
+          {forecast.weather_data && <WeatherOutlook weatherData={forecast.weather_data} />}
           <ReactMarkdown 
             components={{
               h1: ({children}) => <h1 className="text-xl font-bold text-gray-900 mb-3">{children}</h1>,
