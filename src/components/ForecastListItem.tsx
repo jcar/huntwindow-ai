@@ -23,6 +23,14 @@ export default function ForecastListItem({ forecast }: ForecastListItemProps) {
     });
   };
 
+  const extractEbirdCount = (ebirdSummary: string) => {
+    if (!ebirdSummary) return null;
+    const match = ebirdSummary.match(/reports (\d+)/);
+    return match ? parseInt(match[1], 10) : null;
+  };
+
+  const ebirdCount = extractEbirdCount(forecast.ebird_summary);
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
       <div className="flex justify-between items-start cursor-pointer hover:bg-gray-50 -m-4 p-4 rounded-lg transition-colors" onClick={handleToggle}>
@@ -30,7 +38,19 @@ export default function ForecastListItem({ forecast }: ForecastListItemProps) {
           <h3 className="text-lg font-semibold text-gray-900 capitalize">
             {forecast.species}
           </h3>
-          <p className="text-sm text-gray-600">ZIP: {forecast.zip}</p>
+          <div className="flex items-center space-x-3">
+            <p className="text-sm text-gray-600">ZIP: {forecast.zip}</p>
+            {ebirdCount !== null && (
+              <div className="flex items-center space-x-1">
+                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span className="text-sm font-medium text-green-700">
+                  {ebirdCount} sightings
+                </span>
+              </div>
+            )}
+          </div>
         </div>
         <div className="text-right flex items-center space-x-2">
           <div>

@@ -16,4 +16,5 @@ export interface ForecastListItem {
   zip: string;
   created_at: string;
   forecast: string;
+  ebird_summary: string;
 }
