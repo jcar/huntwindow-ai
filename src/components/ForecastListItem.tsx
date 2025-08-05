@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import type { ForecastListItem } from '@/types';
 
 interface ForecastListItemProps {
@@ -5,10 +7,10 @@ interface ForecastListItemProps {
 }
 
 export default function ForecastListItem({ forecast }: ForecastListItemProps) {
-  // Extract first few sentences as summary
-  const getSummary = (text: string) => {
-    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    return sentences.slice(0, 2).join('. ') + (sentences.length > 2 ? '...' : '');
+  const [expanded, setExpanded] = useState(false);
+
+  const handleToggle = () => {
+    setExpanded(!expanded);
   };
 
   const formatDate = (dateString: string) => {
@@ -23,25 +25,52 @@ export default function ForecastListItem({ forecast }: ForecastListItemProps) {
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex justify-between items-start cursor-pointer hover:bg-gray-50 -m-4 p-4 rounded-lg transition-colors" onClick={handleToggle}>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900 capitalize">
             {forecast.species}
           </h3>
           <p className="text-sm text-gray-600">ZIP: {forecast.zip}</p>
         </div>
-        <div className="text-right">
-          <p className="text-xs text-gray-500">
-            {formatDate(forecast.created_at)}
-          </p>
+        <div className="text-right flex items-center space-x-2">
+          <div>
+            <p className="text-xs text-gray-500">
+              {formatDate(forecast.created_at)}
+            </p>
+          </div>
+          <div className="text-gray-400">
+            {expanded ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            )}
+          </div>
         </div>
       </div>
-      
-      <div className="mt-3">
-        <p className="text-sm text-gray-700 leading-relaxed">
-          {getSummary(forecast.forecast)}
-        </p>
-      </div>
+
+      {expanded && (
+        <div className="mt-4 prose prose-sm prose-gray max-w-none">
+          <ReactMarkdown 
+            components={{
+              h1: ({children}) => <h1 className="text-xl font-bold text-gray-900 mb-3">{children}</h1>,
+              h2: ({children}) => <h2 className="text-lg font-semibold text-gray-900 mb-2">{children}</h2>,
+              h3: ({children}) => <h3 className="text-base font-medium text-gray-900 mb-2">{children}</h3>,
+              p: ({children}) => <p className="text-gray-700 mb-2 leading-relaxed">{children}</p>,
+              ul: ({children}) => <ul className="list-disc list-inside text-gray-700 mb-2 space-y-1">{children}</ul>,
+              ol: ({children}) => <ol className="list-decimal list-inside text-gray-700 mb-2 space-y-1">{children}</ol>,
+              li: ({children}) => <li className="">{children}</li>,
+              strong: ({children}) => <strong className="font-semibold text-gray-900">{children}</strong>,
+              em: ({children}) => <em className="italic">{children}</em>,
+            }}
+          >
+            {forecast.forecast}
+          </ReactMarkdown>
+        </div>
+      )}
     </div>
   );
 }

@@ -98,7 +98,7 @@ export default function ForecastsPage() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {forecasts.map((forecast) => (
               <ForecastListItem key={forecast.id} forecast={forecast} />
             ))}
