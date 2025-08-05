@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient';
-import type { User, AuthError } from '@supabase/supabase-js';
+import type { User, AuthError, Provider } from '@supabase/supabase-js';
 
 export interface AuthUser {
   id: string;
@@ -57,6 +57,19 @@ export async function getCurrentSession() {
   const { data: { session }, error } = await supabase.auth.getSession();
   if (error) throw error;
   return session;
+}
+
+// Sign in with OAuth provider
+export async function signInWithProvider(provider: Provider) {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: `${window.location.origin}/auth/callback`
+    }
+  });
+  
+  if (error) throw error;
+  return data;
 }
 
 // Listen to auth state changes
