@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import HuntForm from '@/components/HuntForm';
 import { zipToLatLon } from '@/lib/geocode';
 import ReactMarkdown from "react-markdown";
@@ -42,15 +43,25 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen p-6 bg-gray-100 text-gray-900">
-      <h1 className="text-3xl font-bold text-center mb-6">HuntWindow AI</h1>
-      <HuntForm onSubmit={handleSubmit} />
-      {loading && <p className="text-center mt-6">Loading forecast...</p>}
-      {result && (
-        <div className="bg-white shadow p-4 mt-6 max-w-2xl mx-auto whitespace-pre-wrap border border-gray-300 rounded text-gray-900">
-          <h2 className="text-xl font-semibold mb-2">Forecast Result</h2>
-          <p><ReactMarkdown>{result}</ReactMarkdown></p>
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">HuntWindow AI</h1>
+          <Link 
+            href="/forecasts" 
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            Recent Forecasts
+          </Link>
         </div>
-      )}
+        <HuntForm onSubmit={handleSubmit} />
+        {loading && <p className="text-center mt-6">Loading forecast...</p>}
+        {result && (
+          <div className="bg-white shadow p-4 mt-6 max-w-2xl mx-auto whitespace-pre-wrap border border-gray-300 rounded text-gray-900">
+            <h2 className="text-xl font-semibold mb-2">Forecast Result</h2>
+            <p><ReactMarkdown>{result}</ReactMarkdown></p>
+          </div>
+        )}
+      </div>
     </main>
   );
 }
