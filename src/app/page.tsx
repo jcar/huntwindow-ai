@@ -3,12 +3,17 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import HuntForm from '@/components/HuntForm';
+import Header from '@/components/Header';
+import AuthModal from '@/components/AuthModal';
+import { useAuth } from '@/contexts/AuthContext';
 import { zipToLatLon } from '@/lib/geocode';
 import ReactMarkdown from "react-markdown";
 
 export default function HomePage() {
   const [result, setResult] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const { user, session } = useAuth();
 
   const handleSubmit = async ({
     species,
@@ -17,6 +22,12 @@ export default function HomePage() {
     species: string;
     zip: string;
   }) => {
+    // Prevent non-authenticated users from generating forecasts
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
+
     setLoading(true);
     setResult(null);
 
@@ -30,7 +41,15 @@ export default function HomePage() {
         zip,
       }).toString();
 
-      const res = await fetch(`/api/forecast?${query}`);
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
+      
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+
+      const res = await fetch(`/api/forecast?${query}`, { headers });
       const data = await res.json();
       setResult(data.forecast || 'No forecast returned.');
     } catch (err) {
@@ -42,26 +61,37 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen p-6 bg-gray-100 text-gray-900">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">HuntWindow AI</h1>
-          <Link 
-            href="/forecasts" 
-            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            Recent Forecasts
-          </Link>
-        </div>
-        <HuntForm onSubmit={handleSubmit} />
-        {loading && <p className="text-center mt-6">Loading forecast...</p>}
-        {result && (
-          <div className="bg-white shadow p-4 mt-6 max-w-2xl mx-auto whitespace-pre-wrap border border-gray-300 rounded text-gray-900">
-            <h2 className="text-xl font-semibold mb-2">Forecast Result</h2>
-            <p><ReactMarkdown>{result}</ReactMarkdown></p>
+    <>
+      <Header />
+      <main className="min-h-screen bg-gray-100 text-gray-900">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Generate Your Hunting Forecast</h1>
+            <p className="text-lg text-gray-600">AI-powered forecasts combining weather data and bird sighting intelligence</p>
+            {!user && (
+              <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-blue-800 font-medium">🔒 Please sign in to create personalized hunting forecasts</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-    </main>
+          <HuntForm onSubmit={handleSubmit} disabled={!user} />
+          {loading && <p className="text-center mt-6">Loading forecast...</p>}
+          {result && (
+            <div className="bg-white shadow-lg p-6 mt-8 max-w-3xl mx-auto border border-gray-200 rounded-lg">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-900">Your Hunting Forecast</h2>
+              <div className="prose prose-gray max-w-none">
+                <ReactMarkdown>{result}</ReactMarkdown>
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+
+      <AuthModal 
+        isOpen={showAuthPrompt}
+        onClose={() => setShowAuthPrompt(false)}
+        mode="signup"
+      />
+    </>
   );
 }

@@ -1,5 +1,6 @@
 export interface Forecast {
   id: string;
+  user_id: string | null;
   species: string;
   zip: string;
   lat: number;
@@ -12,6 +13,7 @@ export interface Forecast {
 
 export interface ForecastListItem {
   id: string;
+  user_id: string | null;
   species: string;
   zip: string;
   created_at: string;

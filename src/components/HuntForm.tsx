@@ -7,9 +7,10 @@ type Props = {
     species: string;
     zip: string;
   }) => void;
+  disabled?: boolean;
 };
 
-export default function HuntForm({ onSubmit }: Props) {
+export default function HuntForm({ onSubmit, disabled }: Props) {
   const [species, setSpecies] = useState('dove');
   const [zip, setZip] = useState('76201');
 
@@ -25,7 +26,12 @@ export default function HuntForm({ onSubmit }: Props) {
         <select
           value={species}
           onChange={(e) => setSpecies(e.target.value)}
-          className="w-full border border-gray-400 rounded p-2 text-gray-900"
+          disabled={disabled}
+          className={`w-full border rounded p-2 text-gray-900 ${
+            disabled 
+              ? 'border-gray-300 bg-gray-100 cursor-not-allowed' 
+              : 'border-gray-400 bg-white'
+          }`}
         >
           <option value="dove">Dove</option>
           <option value="duck">Duck</option>
@@ -39,15 +45,25 @@ export default function HuntForm({ onSubmit }: Props) {
           type="text"
           value={zip}
           onChange={(e) => setZip(e.target.value)}
-          className="w-full border border-gray-400 rounded p-2 text-gray-900"
+          disabled={disabled}
+          className={`w-full border rounded p-2 text-gray-900 ${
+            disabled 
+              ? 'border-gray-300 bg-gray-100 cursor-not-allowed' 
+              : 'border-gray-400 bg-white'
+          }`}
         />
       </div>
 
       <button
         type="submit"
-        className="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded w-full"
+        className={`font-bold py-2 px-4 rounded w-full transition-colors ${
+          disabled
+            ? 'bg-gray-400 cursor-not-allowed text-gray-600'
+            : 'bg-green-700 hover:bg-green-800 text-white'
+        }`}
+        disabled={disabled}
       >
-        Get Hunting Forecast
+        {disabled ? '🔒 Sign In Required' : 'Get Hunting Forecast'}
       </button>
     </form>
   );
