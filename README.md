@@ -4,6 +4,12 @@
 
 HuntWindow AI is a Next.js application that generates intelligent hunting forecasts by analyzing weather patterns, eBird sighting data, and environmental conditions to help hunters plan their outings with data-driven insights.
 
+## 🌐 Try it Live!
+
+**🚀 [Launch HuntWindow AI](https://huntwindow-edgvhk8wp-jcars-projects.vercel.app)**
+
+*Generate your first AI-powered hunting forecast in seconds! Just enter your ZIP code and select your target species.*
+
 ## ✨ Features
 
 - **🤖 AI-Powered Forecasts**: GPT-powered analysis combining multiple data sources
@@ -150,6 +156,31 @@ src/
 - `GET /api/forecasts` - Retrieve forecast history
 - `GET /api/forecast?species=dove&lat=40.7128&lon=-74.0060&zip=10001` - Generate new forecast
 - `GET /api/weather?lat=40.7128&lon=-74.0060` - Get weather data
+
+## 🚀 Deployment
+
+This project is configured for automatic deployment to Vercel using GitHub Actions.
+
+### Auto-Deploy Setup
+
+1. **Fork this repository**
+2. **Set up Vercel project**: `vercel link`
+3. **Add GitHub repository secrets**:
+   - `VERCEL_TOKEN` - Get from [Vercel tokens page](https://vercel.com/account/tokens)
+   - `ORG_ID` - From `.vercel/project.json`
+   - `PROJECT_ID` - From `.vercel/project.json`
+4. **Configure environment variables** in Vercel dashboard
+5. **Push to main branch** - automatic deployment will trigger
+
+### Manual Deploy
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy to production
+vercel --prod
+```
 
 ## 🌍 Environment Variables
 
